@@ -1,18 +1,19 @@
 #Прямоугольный треагольник
 
 print "Введите три стороны треугольника через пробел: "
-triangle = gets.chomp.split(' ')
+t = gets.chomp.split(' ') # t - triangle
+t = t.map{ |f| f.to_f }
 
-triangle = triangle.map{ |f| f.to_f }
+h = t.max # h - hypotenuse 
+t.delete(h)
 
-hypotenuse = triangle.max
+a = t[0]
+b = t[1]
 
-triangle.delete(hypotenuse)
-
-
-if !triangle.empty? 
-	puts "Треугольник #{ hypotenuse**2 == triangle[0]**2 + triangle[1]**2  ? 'прямоугольный' : 'не прямоугольный'} "
-	print ", равнобедренный" if triangle[0]==triangle[1]
+if !t.empty? 
+	print "Треугольник #{ h**2 == a**2 + b**2  ? 'прямоугольный' : 'не прямоугольный'} "
+	puts "#{ a==b ? ', но равнобедренный' : ' ' }" 
 else	
-	puts "Треугольник не прямоугольный, равносторнонний" 
+	puts "Треугольник не прямоугольный, а равносторнонний" 
 end
+
