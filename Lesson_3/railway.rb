@@ -1,8 +1,7 @@
 
 class Station
 
-  attr_accessor :name
-  attr_accessor :trains
+  attr_accessor :name, :trains
 
   def initialize(name)
     @name = name
@@ -18,7 +17,7 @@ class Station
   end 
 
   def get_trains_by_type(type)
-    return @trains.select { |train| train.type == type }
+    @trains.select { |train| train.type == type }
   end 
 
 end
@@ -33,9 +32,7 @@ class Route
   end
 
   def add_station(station)
-    last_station = @stations.last
-    @stations[-1] = station
-    @stations << last_station
+    @stations.insert(-2, station)
   end
 
   def del_station(station)    
@@ -46,12 +43,7 @@ end
 
 class Train  
 
-  attr_accessor :number
-  attr_accessor :type
-  attr_accessor :wagons
-  attr_accessor :speed
-  attr_accessor :route
-  attr_accessor :station
+  attr_accessor :number, :type, :wagons, :speed, :route
 
   def initialize(train_number, train_type, number_of_wagons)
     @number = train_number
@@ -60,8 +52,8 @@ class Train
     @speed = 0
   end  
 
-  def speed_up(speed)
-    @speed = speed
+  def speed_up
+    @speed += 1
   end
 
   def stop
@@ -76,25 +68,36 @@ class Train
      @wagons -= 1 if  (@speed) == 0 && (@wagons > 0) #  "Не погу отцепить вагон. Поезд в пути или у поезда нет вагонов"
   end
 
+  def station
+    @route.stations[@station_index]
+  end
+
   def to_route(route)
-    @station = route.stations.first
     @route = route
+    @station_index = 0
+    station.take_train(self)    
+  end
+
+  def moove(i)
+    station.send_train(self)
+    @station_index += i    
+    station.take_train(self) 
   end
 
   def moove_forward
-    @station = route.stations[route.stations.index(@station) + 1] if @station != route.stations.last   # "Поезд на конечной станции"
+    moove(1) if station != route.stations.last  # "Поезд на конечной станции"  
   end
 
   def moove_back
-    @station = route.stations[route.stations.index(@station) - 1] if @station != route.stations.first # "Поезд на первой станции"
+    moove(-1) if station != route.stations.first # "Поезд на первой станции"    
   end
 
   def next_station
-    @route.stations[route.stations.index(@station) + 1] if @station != route.stations.last   # "Поезд на конечной станции"
+    @route.stations[@station_index + 1] if station != route.stations.last   # "Поезд на конечной станции"
   end
 
-  def prev_station
-    @route.stations[route.stations.index(@station) - 1] if @station != route.stations.first # "Поезд на первой станции"
+  def prev_station    
+    @route.stations[@station_index - 1] if station != route.stations.first # "Поезд на первой станции"
   end
 
 end
