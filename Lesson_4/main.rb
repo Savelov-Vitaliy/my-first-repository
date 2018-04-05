@@ -8,27 +8,6 @@ require_relative "cargo_wagon.rb"
 require_relative "railway.rb"
 require_relative "control.rb"
 
-
-$railway = RailWay.new
-puts "Симулятор железной дороги"
-puts "© Savelov_Vitaliy 2018"
-help
-start
-
-
-=begin
-loop do
-  puts ""
-  print "Командуйте: "
-  i = gets
-  if i != nil  
-    i = i.chop.split("(")
-    break if i[0] == "0"  
-    i[1] != nil ? i[1].split(",")[1] != nil ? send(i[0], i[1].split(",")[0], i[1].split(",")[1].split(")")[0]) : send(i[0], i[1].split(")")[0]) : send(i[0]); #send(i,"gets")  'text(22)'[/\(^\((.*)\)/]
-  end
-end
-=end
-
-
-
-
+control = Control.new(RailWay.new)
+control.help
+control.start
