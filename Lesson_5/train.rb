@@ -1,13 +1,11 @@
 class Train  
   include InstanceCounter
   include Company
-
-  @@instances = 0
-  @@all_trains = []
+    
+  @@all_trains = {}
 
   def self.find(number)
-    @@all_trains.each { |train| return train if train.number == number }
-    nil
+    @@all_trains[number]
   end
 
   attr_reader :number, :speed, :route, :wagons
@@ -16,7 +14,7 @@ class Train
     @number = train_number
     @wagons = []
     @speed = 0
-    @@all_trains << self
+    @@all_trains[train_number] =  self
     register_instance
   end 
 

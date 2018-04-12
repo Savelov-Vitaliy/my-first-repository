@@ -5,18 +5,22 @@ module InstanceCounter
     class_name.send :include, InstanceMethods
   end
 
-  module ClassMethods   
-    def instances     
-      self.class_variable_get :@@instances
+  module ClassMethods  
+
+    def instances_counter
+      @instances_number ||= 0
+      @instances_number += 1
     end
+
+    def instances     
+      @instances_number
+    end   
   end
 
   module InstanceMethods    
     private  
     def register_instance
-      instances = self.class.class_variable_get :@@instances 
-      instances += 1
-      self.class.class_variable_set :@@instances, instances
+      self.class.instances_counter
     end
   end 
 
