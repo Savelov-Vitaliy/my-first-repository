@@ -16,3 +16,4 @@ require_relative "control.rb"
 control = Control.new(RailWay.new)
 control.help
 control.start
+
