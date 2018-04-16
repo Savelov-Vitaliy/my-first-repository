@@ -16,6 +16,7 @@ class Station
     @trains = []
     @@all_stations << self
     register_instance
+    validate!
   end  
 
   def take_train(train)
@@ -29,5 +30,18 @@ class Station
   def get_trains_by_type(type)
     @trains.select { |train| train.class == type }
   end 
+
+  def valid?
+    validate!
+  rescue
+    false
+  end
+
+  protected
+
+  def validate!
+    raise ArgumentError, "Название станции не задано" if name.delete(' ').empty?
+    true 
+  end
 
 end
