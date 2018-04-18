@@ -9,7 +9,7 @@ class Station
     @@all_stations
   end
 
-  attr_accessor :name  
+  attr_accessor :name, :trains  
 
   def initialize(name)
     @name = name
@@ -18,6 +18,10 @@ class Station
     register_instance
     validate!
   end  
+  
+  def do_it_with_every_train_on_this_station (&block)
+    @trains.each { |train| yield(train) } if block_given?
+  end
 
   def take_train(train)
     @trains << train

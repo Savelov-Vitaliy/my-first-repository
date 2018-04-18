@@ -21,6 +21,10 @@ class Train
     validate!
   end 
 
+  def do_it_with_every_wagon_of_this_train (&block)
+    @wagons.each { |wagon| yield(wagon) } if block_given?
+  end
+
   def speed_up
     @speed += 1   
   end
@@ -75,7 +79,7 @@ class Train
 
   protected  
 
-  def hitch_wagon(wagon)
+  def hitch_wagon(wagon)     
      @wagons <<  wagon if @speed == 0 
   end
 

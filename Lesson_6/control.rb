@@ -53,7 +53,7 @@ class Control
     puts "tb.индекс поезда : переместить поезд назад по маршруту"
     puts "ts.поезд : посмотреть на какой станции находится поезд"
     puts "tw.поезд : посмотреть сколько вагонов у поезда"
-    puts "twa.индекс поезда : прицепить вагон к поезду"
+    puts "twa.индекс поезда, объем вагона : прицепить вагон к поезду"
     puts "twd.индекс поезда : отцепить вагон от поезда"
     puts "tspu.поезд : увеличить скорость поезда"
     puts "tstop.индекс поезда : остановить поезд"
@@ -102,6 +102,13 @@ class Control
       puts ""
     else
       puts " нет грузовых поездов"
+    end
+  end
+
+  def stn(station_i)      
+    puts "На станции #{print_station(station(station_i))} находятся #{station(station_i).trains.size}шт. поездов"
+    station(station_i).do_it_with_every_train_on_this_station do |train|      
+      puts "Поезд № #{train.number}, тип: #{train_type(train)}, вагонов: #{train.wagons.size}шт."
     end
   end
 
@@ -179,9 +186,9 @@ class Control
     puts "Поезду #{print_train(train(train_i))} назначен маршрут #{print_route(route(route_i))}"
   end
 
-  def twa(train_i)
+  def twa(train_i, volume)
       return puts "Не могу прицепить вагон. Поезд #{print_train(train(train_i))} мчится со скоростью: #{train(train_i).speed}. Остановите поезд!" if train(train_i).speed > 0
-      train(train_i).hitch_wagon
+      train(train_i).hitch_wagon(volume.to_i)
       puts "К поезду #{print_train(train(train_i))} прицеплен новый вагон. Итого вагонов: #{train(train_i).wagons.size}" 
   end
 
@@ -194,6 +201,18 @@ class Control
 
   def tw(train_i)  
     puts "У поезда #{print_train(train(train_i))}  #{@railway.trains[train_i.to_i].wagons.size}шт. вагонов"
+    wagon_number = 0
+    train(train_i).do_it_with_every_wagon_of_this_train do |wagon|      
+      puts "Вагон № #{wagon_number}, тип: #{wagon_type(wagon)}, свободно: #{wagon.free}, занято: #{wagon.occupied}"
+      wagon_number += 1
+    end
+  end
+
+  def twt(train_i, wagon_i, volume)
+    wagon = train(train_i).wagons[wagon_i]
+    print "У поезда #{print_train(train(train_i))} в вагоне № #{wagon_i} свободно:  #{wagon.free}, "
+    wagon.take(volume)
+    puts "занимаем: #{volume}, осталось: #{wagon.free}"
   end
 
   def tspu(train_i)
@@ -246,15 +265,21 @@ class Control
     ta('130-LS','passenger')
     ta('Hoods','passenger')
     ta('50001','cargo')
-    ta('Lucky','cargo')
+    ta('Lucky','cargo')    
     t
     tra(0, 1)
     tra(1, 0)  
     tra(2, 1)  
     tra(4, 2)
-    twa(0)
-    twa(0)
-    twa(4)
+    twa(0, 100)
+    twa(0, 50)
+    twa(4, 5)
+    twt(0,0,50)
+    twt(0,0,5)
+    twt(0,1,7)
+    twt(4,0,5)    
+    tw(0)
+    tw(1)
     tspu(0)
     tspu(1)
     tspu(1)
@@ -272,6 +297,8 @@ class Control
     tstop(4)
     twd(4)
     te
+    stn(2)    
+    ta('1 Скорый','passenger')
   end
 
   private
@@ -314,6 +341,10 @@ class Control
     train.route == nil ? station = "" : station =", станция: #{print_station(train.station)}"
     train.route == nil ? route = "" : route =", марштрут: #{print_route(train.route)}"
     "#{@railway.trains.index(train)}.#{train.number} (#{train_type(train)}) #{station}#{route}, скорость: #{train.speed}, вагонов: #{train.wagons.size}"
+  end
+
+  def wagon_type(wagon)
+    wagon.class == PassengerWagon ? "пассажирский" : "грузовой"
   end
 
 end
