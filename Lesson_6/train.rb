@@ -21,7 +21,7 @@ class Train
     validate!
   end 
 
-  def do_it_with_every_wagon_of_this_train (&block)
+  def each_wagon (&block)
     @wagons.each { |wagon| yield(wagon) } if block_given?
   end
 

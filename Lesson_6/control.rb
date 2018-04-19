@@ -107,7 +107,7 @@ class Control
 
   def stn(station_i)      
     puts "На станции #{print_station(station(station_i))} находятся #{station(station_i).trains.size}шт. поездов"
-    station(station_i).do_it_with_every_train_on_this_station do |train|      
+    station(station_i).each_train do |train|      
       puts "Поезд № #{train.number}, тип: #{train_type(train)}, вагонов: #{train.wagons.size}шт."
     end
   end
@@ -186,9 +186,9 @@ class Control
     puts "Поезду #{print_train(train(train_i))} назначен маршрут #{print_route(route(route_i))}"
   end
 
-  def twa(train_i, volume)
+  def twa(train_i, total_volume_or_seats)
       return puts "Не могу прицепить вагон. Поезд #{print_train(train(train_i))} мчится со скоростью: #{train(train_i).speed}. Остановите поезд!" if train(train_i).speed > 0
-      train(train_i).hitch_wagon(volume.to_i)
+      train(train_i).hitch_wagon(total_volume_or_seats.to_i)
       puts "К поезду #{print_train(train(train_i))} прицеплен новый вагон. Итого вагонов: #{train(train_i).wagons.size}" 
   end
 
@@ -202,7 +202,7 @@ class Control
   def tw(train_i)  
     puts "У поезда #{print_train(train(train_i))}  #{@railway.trains[train_i.to_i].wagons.size}шт. вагонов"
     wagon_number = 0
-    train(train_i).do_it_with_every_wagon_of_this_train do |wagon|      
+    train(train_i).each_wagon do |wagon|      
       puts "Вагон № #{wagon_number}, тип: #{wagon_type(wagon)}, свободно: #{wagon.free}, занято: #{wagon.occupied}"
       wagon_number += 1
     end

@@ -19,7 +19,7 @@ class Station
     validate!
   end  
   
-  def do_it_with_every_train_on_this_station (&block)
+  def each_train (&block)
     @trains.each { |train| yield(train) } if block_given?
   end
 
