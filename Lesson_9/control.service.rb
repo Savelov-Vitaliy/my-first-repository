@@ -61,7 +61,8 @@ module ControlService
   def seed
     test_stations_and_routs
     test_trains
-    test_wagons
+    test_wagons    
+    ta('1 Скорый', 'passenger')
   end
 
   def test_stations_and_routs
@@ -105,7 +106,6 @@ module ControlService
     tb(1)
     te
     stn(2)
-    ta('1 Скорый', 'passenger')
   end
 
   def test_wagons
