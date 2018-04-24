@@ -1,3 +1,3 @@
 class Wagon
-  include Company
+  include Company  
 end

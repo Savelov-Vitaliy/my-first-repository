@@ -1,6 +1,7 @@
 
 class Station
   include InstanceCounter
+  include Validation
 
   attr_accessor :name, :trains
 
@@ -40,16 +41,4 @@ class Station
     @trains.select { |train| train.class == type }
   end
 
-  def valid?
-    validate!
-  rescue StandardError
-    false
-  end
-
-  protected
-
-  def validate!
-    raise ArgumentError, 'Название станции не задано' if name.delete(' ').empty?
-    true
-  end
 end

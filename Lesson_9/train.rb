@@ -1,6 +1,7 @@
 class Train
   include InstanceCounter
   include Company
+  include Validation
 
   TRAIN_NUMBER_FORMAT = /\w{3}-{1}*\w{2}/i
 
@@ -76,12 +77,6 @@ class Train
     station == @route.stations.last
   end
 
-  def valid?
-    validate!
-  rescue StandardError
-    false
-  end
-
   protected
 
   def hitch_wagon(wagon)
@@ -94,9 +89,4 @@ class Train
     station.take_train(self)
   end
 
-  def validate!
-    raise ArgumentError, 'Номера поезда не указан' if number.delete(' ').empty?
-    raise ArgumentError, 'Неверный формат номера поезда' if number !~ TRAIN_NUMBER_FORMAT
-    true
-  end
 end
