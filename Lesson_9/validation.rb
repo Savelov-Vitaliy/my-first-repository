@@ -1,56 +1,53 @@
 module Validation
 
-   def self.included(class_name)
+  def self.included(class_name)
     class_name.extend ClassMethods
     class_name.send :include, InstanceMethods
   end
 
   module ClassMethods
 
-    def validate(name, type, *attr)
-      case type
-      when :presence
-        return false if name.to_s.empty?
-      when :format
-        return false if name !~ attr[0]
-      when :type
-        return false unless name.is_a? attr[0]
-      end
-      true
-    end
+  attr_accessor :validations
+
+  private
+
+  def validate(attr_name, validation_type, param = nil)
+    @validations ||= []
+    @validations << { attr_name: attr_name, validation_type: validation_type, param: param }
+  end
 
   end
 
   module InstanceMethods
+
+    def valid?
+      validate!
+    rescue StandardError
+      false
+    end
+
     private 
 
-      def validate!        
-        case self  
-        when Train
-          name = self.number
-          type = String
-          format = /\w{3}-{1}*\w{2}/i
-        when Station
-          name = self.name
-          type = String
-          format = /[а-я\w]/i
-        when Route
-          name = self.stations.first          
-          type = Station
-          format = /A[а-я\w]/i
-        end        
-        raise ArgumentError, 'Атрибут не указан'  unless self.class.validate name, :presence  
-        raise ArgumentError, 'Не верный формат'   unless self.class.validate name, :format, format unless self.is_a? Route
-        raise ArgumentError, 'Не верный тип'      unless self.class.validate name, :type, type      
-        true
+    def validate! 
+      self.class.validations ||= []  
+      self.class.validations.each do |validation|
+        send validation[:validation_type], instance_variable_get("@#{validation[:attr_name]}".to_sym), validation[:param]
       end
-
-      def valid?
-        validate!
-      rescue StandardError
-        false
-      end
-
+      true
     end
+
+    def presence(attr, *param)
+      raise ArgumentError, 'Пустой параметр' if attr.empty?
+    end
+
+    def format(attr, format)
+      raise ArgumentError, 'Неверный формат' if attr !~ format
+    end
+
+    def type(attr, type)
+      raise ArgumentError, 'Неверный тип' unless attr.is_a? type
+    end
+  
+  end
 
 end

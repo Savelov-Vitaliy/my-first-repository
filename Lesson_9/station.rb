@@ -5,6 +5,12 @@ class Station
 
   attr_accessor :name, :trains
 
+  NAME_FORMAT = /[а-я\w]/i
+
+  validate :name, :presence
+  validate :name, :format, NAME_FORMAT
+  validate :name, :type, String
+
   @instances = 0
   @all_stations = []
 
@@ -21,7 +27,7 @@ class Station
     @trains = []
     self.class.all_stations ||= []
     self.class.all_stations << self
-    register_instance
+    register_instance    
     validate!
   end
 

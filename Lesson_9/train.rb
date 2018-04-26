@@ -3,9 +3,17 @@ class Train
   include Company
   include Validation
 
-  TRAIN_NUMBER_FORMAT = /\w{3}-{1}*\w{2}/i
-
   attr_reader :number, :speed, :route, :wagons
+ 
+  NUMBER_FORMAT = /\w{3}-{1}*\w{2}/i
+
+  def self.initialize_validations    
+    validate :number, :presence
+    validate :number, :format, NUMBER_FORMAT
+    validate :number, :type, String
+  end
+
+  initialize_validations
 
   @all_trains = {}
 
